@@ -31,24 +31,6 @@ A comprehensive online learning management system (LMS) built with Node.js, desi
 - npm or yarn
 - SQLite3
 
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd arab-technical-academy
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment**
-   - The application uses hardcoded API keys for demonstration purposes
-   - In production, move these to environment variables:
-     - Cloudinary credentials
-     - ImgBB API key
 
 
 
