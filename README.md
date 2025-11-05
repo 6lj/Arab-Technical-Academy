@@ -1,5 +1,6 @@
-# Arab Technical Academy - Online Learning Platform
 
+# Arab Technical Academy - Online Learning Platform
+![](https://q5.qa/kax3ul6cdomb03zmwg.svg)
 A comprehensive online learning management system (LMS) built with Node.js, designed to provide quality technical education in Arabic. The platform offers course management, certificate generation, progress tracking, and an interactive learning experience.
 
 ## 🌟 Features
