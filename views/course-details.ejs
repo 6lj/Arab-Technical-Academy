@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= course.title %> - أكاديمية العرب التقنية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { 
+            font-family: 'Cairo', sans-serif;
+            background: white;
+            color: black;
+            min-height: 100vh;
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .course-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: #0f172a;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #0f172a;
+            color: #0f172a;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline:hover {
+            background: #0f172a;
+            color: white;
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 24px;
+        }
+        
+        .instructor-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+        
+        .rating-stars {
+            color: #fbbf24;
+        }
+        
+        .course-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .course-level {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .course-category {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .content-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .content-item:last-child {
+            border-bottom: none;
+        }
+        
+        .content-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+        
+        .content-title {
+            flex: 1;
+            font-weight: 500;
+            color: black;
+        }
+        
+        .content-duration {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        
+        .section-toggle {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .section-toggle:hover {
+            background: #f9fafb;
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .section-content.open {
+            max-height: 1000px;
+        }
+        
+        .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .arrow-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .review-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            background: #0B3D91;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .review-rating {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+        
+        .review-comment {
+            color: black;
+            line-height: 1.6;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0B3D91;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .section-toggle {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .section-toggle:hover {
+            background: #f9fafb;
+        }
+        
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .section-content.open {
+            max-height: 1000px;
+        }
+        
+        .arrow-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .arrow-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .review-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+        
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            background: #0B3D91;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .review-rating {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+        
+        .review-comment {
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .content-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        
+        .content-item:last-child {
+            border-bottom: none;
+        }
+        
+        .content-icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+        
+        .content-title {
+            flex: 1;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .content-duration {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .completed-icon {
+            color: #10b981;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Rating Modal Styles */
+        .rating-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .rating-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .rating-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .rating-modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .rating-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .rating-modal-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .rating-stars-modal {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+        
+        .rating-star-modal {
+            font-size: 32px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .rating-star-modal:hover,
+        .rating-star-modal.active {
+            color: #fbbf24;
+        }
+        
+        .rating-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn-skip {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-skip:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-submit-rating {
+            background: #0B3D91;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .btn-submit-rating:hover {
+            background: #092e6e;
+        }
+        
+        .btn-submit-rating:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Rating Modal Styles */
+        .rating-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .rating-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .rating-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .rating-modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .rating-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .rating-modal-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .rating-stars-modal {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+
+        .rating-star-modal {
+            font-size: 32px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rating-star-modal:hover,
+        .rating-star-modal.active {
+            color: #fbbf24;
+        }
+
+        .rating-modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-skip {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-skip:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-submit-rating {
+            background: #0B3D91;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-submit-rating:hover {
+            background: #092e6e;
+        }
+
+        .btn-submit-rating:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <%- include('partials/header') %>
+    
+    <!-- Course Header -->
+    <section class="bg-white py-8 border-b">
+        <div class="container mx-auto px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-3">
+                        <span class="course-category"><%= course.category %></span>
+                        <span class="course-level">
+                            <%= convertLevelToArabic(course.level) %>
+                        </span>
+                    </div>
+                    
+                    <!-- Course Actions -->
+                    <div class="flex items-center gap-4">
+                        <% if (enrolled) { %>
+                            <div class="text-center">
+                                <div class="text-sm text-gray-600 mb-1">التقدم</div>
+                                <div class="text-lg font-bold text-black"><%= enrollment.progress %>%</div>
+                                <div class="progress-bar w-24">
+                                    <div class="progress-fill" data-width="<%= enrollment.progress %>%"></div>
+                                </div>
+                            </div>
+                            <a href="/learn/<%= course.id %>" class="btn-primary px-6 py-3 rounded-lg font-semibold">
+                                متابعة التعلم
+                            </a>
+                        <% } else { %>
+                            <% if (user) { %>
+                                <button onclick="enrollCourse('<%= course.id %>')" 
+                                        class="btn-primary px-6 py-3 rounded-lg font-semibold"
+                                        type="button">
+                                    التسجيل في الدورة
+                                </button>
+                            <% } else { %>
+                                <a href="/login" class="btn-primary px-6 py-3 rounded-lg font-semibold">
+                                    سجل للالتحاق بالدورة
+                                </a>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-6">
+                    <!-- Course Image -->
+                    <div class="flex-shrink-0">
+                        <img src="<%= course.thumbnail_url || 'https://via.placeholder.com/400x300/0B3D91/FFFFFF?text=' + encodeURIComponent(course.title) %>" 
+                             alt="<%= course.title %>" 
+                             class="w-96 h-72 object-cover rounded-lg shadow-lg">
+                    </div>
+                    
+                    <div class="flex-1">
+                        <h1 class="text-4xl font-bold text-black mb-4"><%= course.title %></h1>
+                        <p class="text-lg text-gray-700 mb-6 leading-relaxed"><%= course.description %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <div class="container mx-auto px-6 py-12">
+        <div class="max-w-6xl mx-auto">
+            <div class="space-y-8">
+                <!-- What You'll Learn -->
+                <% if (course.what_you_learn) { %>
+                    <div class="section-card p-6">
+                        <h2 class="text-2xl font-bold text-black mb-6 flex items-center gap-3">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            ماذا ستتعلم
+                        </h2>
+                        <div class="text-black whitespace-pre-line leading-relaxed"><%= course.what_you_learn %></div>
+                    </div>
+                <% } %>
+                
+                <!-- Course Content -->
+                <div class="section-card p-6">
+                    <h2 class="text-2xl font-bold text-black mb-6 flex items-center gap-3">
+                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        محتوى الدورة
+                    </h2>
+                        <div class="space-y-4">
+                            <% sections.forEach((section, sIndex) => { %>
+                                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                                    <div class="section-toggle p-4 font-semibold cursor-pointer hover:bg-gray-50 transition-all duration-300" 
+                                         onclick="toggleSection('<%= sIndex %>')">
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-black text-lg">القسم <%= sIndex + 1 %>: <%= section.title %></span>
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-gray-600 text-sm"><%= section.contents.length %> محاضرة</span>
+                                                <svg class="w-5 h-5 text-gray-500 transition-transform duration-300 arrow-icon" id="arrow-<%= sIndex %>" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="section-<%= sIndex %>" class="section-content bg-gray-50 p-4 space-y-3">
+                                        <% section.contents.forEach(content => { %>
+                                            <div class="content-item">
+                                                <div class="flex items-center gap-3">
+                                                    <% if (content.type === 'video') { %>
+                                                        <svg class="content-icon text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"></path>
+                                                        </svg>
+                                                    <% } else if (content.type === 'quiz') { %>
+                                                        <svg class="content-icon text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    <% } else { %>
+                                                        <svg class="content-icon text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 0v12h4V4H6z" clip-rule="evenodd"></path>
+                                                        </svg>
+                                                    <% } %>
+                                                    <span class="content-title"><%= content.title %></span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <% if (content.duration) { %>
+                                                        <span class="content-duration"><%= content.duration %></span>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    
+                    <!-- Requirements -->
+                    <% if (course.requirements) { %>
+                        <div class="section-card p-6">
+                            <h2 class="text-2xl font-bold text-black mb-6 flex items-center gap-3">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                المتطلبات
+                            </h2>
+                            <div class="text-black whitespace-pre-line leading-relaxed"><%= course.requirements %></div>
+                        </div>
+                    <% } %>
+                    
+                    <!-- Reviews -->
+                    <div class="section-card p-6">
+                        <h2 class="text-2xl font-bold text-black mb-6 flex items-center gap-3">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                            </svg>
+                            تقييمات الطلاب
+                        </h2>
+                        
+                        <% if (user && enrolled) { %>
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold text-black mb-4">أضف تقييمك</h3>
+                                <form id="reviewForm" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-black mb-2">التقييم</label>
+                                        <div class="flex gap-1">
+                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                <button type="button" class="rating-star text-2xl text-gray-300 hover:text-yellow-400 transition-colors" data-rating="<%= i %>">★</button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-black mb-2">التعليق</label>
+                                        <textarea name="comment" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="شاركنا رأيك في الدورة..."></textarea>
+                                    </div>
+                                    <button type="submit" class="btn-primary px-6 py-2 rounded-lg font-semibold">
+                                        إرسال التقييم
+                                    </button>
+                                </form>
+                            </div>
+                        <% } %>
+                        
+                        <div class="space-y-4">
+                            <% if (reviews && reviews.length > 0) { %>
+                                <% reviews.forEach(review => { %>
+                                    <div class="review-card">
+                                        <div class="review-header">
+                                            <div class="review-avatar">
+                                                <%= review.user_name.charAt(0) %>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-black"><%= review.user_name %></div>
+                                                <div class="review-rating">
+                                                    <% for (let i = 1; i <= 5; i++) { %>
+                                                        <% if (i <= review.rating) { %>
+                                                            ★
+                                                        <% } else { %>
+                                                            ☆
+                                                        <% } %>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="review-comment text-black"><%= review.comment %></div>
+                                    </div>
+                                <% }) %>
+                            <% } else { %>
+                                <p class="text-gray-600 text-center py-8">لا توجد تقييمات بعد</p>
+                            <% } %>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="rating-modal" style="display: none;">
+        <div class="rating-modal-content">
+            <div class="rating-modal-header">
+                <h3 class="rating-modal-title">تقييم الدورة</h3>
+                <button class="rating-modal-close" onclick="closeRatingModal()">&times;</button>
+            </div>
+            <p class="text-gray-600 text-center mb-4">كيف تقيم هذه الدورة؟</p>
+            <div class="rating-stars-modal" id="modalStars">
+                <span class="rating-star-modal" data-rating="1">★</span>
+                <span class="rating-star-modal" data-rating="2">★</span>
+                <span class="rating-star-modal" data-rating="3">★</span>
+                <span class="rating-star-modal" data-rating="4">★</span>
+                <span class="rating-star-modal" data-rating="5">★</span>
+            </div>
+            <div class="rating-modal-actions">
+                <button class="btn-skip" onclick="skipRating()">تجاهل</button>
+                <button class="btn-submit-rating" id="submitRatingBtn" onclick="submitRating()" disabled>إرسال التقييم</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(index) {
+            const section = document.getElementById(`section-${index}`);
+            const arrow = document.getElementById(`arrow-${index}`);
+            
+            if (section.classList.contains('open')) {
+                section.classList.remove('open');
+                arrow.classList.remove('rotated');
+            } else {
+                section.classList.add('open');
+                arrow.classList.add('rotated');
+            }
+        }
+
+        function enrollCourse(courseId) {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = `
+                <span class="flex items-center justify-center">
+                    <svg class="animate-spin h-4 w-4 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    جاري التسجيل...
+                </span>
+            `;
+            button.disabled = true;
+            
+            fetch('/api/enroll', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ courseId: courseId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    notifications.success('تم التسجيل في الدورة بنجاح!');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    notifications.error(data.message || 'حدث خطأ في التسجيل');
+                    // Reset button
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            })
+            .catch(error => {
+                notifications.error('حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى');
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            });
+        }
+
+        // Rating Modal functionality
+        let modalSelectedRating = 0;
+        let ratingModalShown = false;
+        let ratingCheckInterval;
+
+        function showRatingModal() {
+            if (ratingModalShown) return;
+            
+            console.log('Showing rating modal');
+            const modal = document.getElementById('ratingModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                ratingModalShown = true;
+                
+                // Check if user has already rated this course
+                checkExistingRating();
+            } else {
+                console.log('Rating modal not found');
+            }
+        }
+
+        function closeRatingModal() {
+            console.log('Closing rating modal');
+            const modal = document.getElementById('ratingModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        function skipRating() {
+            closeRatingModal();
+            // Set a flag to not show again for this session
+            sessionStorage.setItem('ratingSkipped_' + '<%= course.id %>', 'true');
+        }
+
+        // Shared rating submission function
+        function submitRatingToServer(rating, comment = '', isModal = false) {
+            // Check if user is logged in
+            <% if (!user) { %>
+            notifications.error('يجب تسجيل الدخول أولاً');
+            return;
+            <% } %>
+            
+            const courseId = '<%= course.id %>';
+            console.log('Course ID from EJS:', courseId);
+            
+            if (!courseId || courseId === 'undefined') {
+                notifications.error('خطأ في معرف الدورة');
+                return;
+            }
+            
+            const data = {
+                rating: parseInt(rating),
+                courseId: courseId,
+                comment: comment || ''
+            };
+
+            console.log('Submitting rating:', data);
+            console.log('Rating type:', typeof data.rating);
+            console.log('Course ID type:', typeof data.courseId);
+
+            fetch('/api/review/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (isModal) {
+                        notifications.success('شكراً لك على تقييم الدورة!');
+                        closeRatingModal();
+                        localStorage.setItem('courseRated_' + '<%= course.id %>', 'true');
+                    } else {
+                        notifications.success('تم إرسال التقييم بنجاح!');
+                    }
+                    // Update the selectedRating variable
+                    selectedRating = rating;
+                    // Reload page to show updated rating
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    notifications.error(data.message || data.error || 'حدث خطأ في إرسال التقييم');
+                }
+            })
+            .catch(error => {
+                console.error('Rating submission error:', error);
+                if (error.message.includes('HTTP error')) {
+                    notifications.error('خطأ في الخادم. يرجى المحاولة مرة أخرى');
+                } else {
+                    notifications.error('حدث خطأ في الاتصال. يرجى التحقق من اتصال الإنترنت');
+                }
+            });
+        }
+
+        function submitRating() {
+            console.log('Modal submit rating:', modalSelectedRating);
+            if (modalSelectedRating === 0) return;
+            submitRatingToServer(modalSelectedRating, '', true);
+        }
+
+        function checkExistingRating() {
+            // Check if user already rated this course
+            fetch('/api/check-rating/<%= course.id %>')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.hasRated) {
+                    closeRatingModal();
+                }
+            })
+            .catch(error => {
+                console.error('Could not check existing rating:', error);
+                // Don't show error to user for this check
+            });
+        }
+
+        function startRatingCheck() {
+            // Check every 24 hours for completed courses without rating
+            ratingCheckInterval = setInterval(() => {
+                <% if (enrolled && enrollment && enrollment.completed) { %>
+                const hasRated = localStorage.getItem('courseRated_' + '<%= course.id %>');
+                const hasSkipped = sessionStorage.getItem('ratingSkipped_' + '<%= course.id %>');
+                
+                if (!hasRated && !hasSkipped) {
+                    showRatingModal();
+                }
+                <% } %>
+            }, 24 * 60 * 60 * 1000); // 24 hours
+        }
+
+        // Rating stars functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set progress bar width from data attribute
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill && progressFill.dataset.width) {
+                progressFill.style.width = progressFill.dataset.width;
+            }
+
+            const stars = document.querySelectorAll('.rating-star');
+            let selectedRating = 0;
+            
+            console.log('Found stars:', stars.length);
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', function() {
+                    selectedRating = index + 1;
+                    console.log('Star clicked, selectedRating:', selectedRating);
+                    updateStars();
+                });
+
+                star.addEventListener('mouseover', function() {
+                    highlightStars(index + 1);
+                });
+            });
+
+            document.querySelector('.rating-star')?.parentElement.addEventListener('mouseleave', function() {
+                updateStars();
+            });
+
+            function updateStars() {
+                stars.forEach((star, index) => {
+                    if (index < selectedRating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.add('text-gray-300');
+                        star.classList.remove('text-yellow-400');
+                    }
+                });
+            }
+
+            function highlightStars(rating) {
+                stars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('text-yellow-400');
+                        star.classList.remove('text-gray-300');
+                    } else {
+                        star.classList.add('text-gray-300');
+                        star.classList.remove('text-yellow-400');
+                    }
+                });
+            }
+
+            // Review form submission
+            const reviewForm = document.getElementById('reviewForm');
+            if (reviewForm) {
+                console.log('Review form found');
+                reviewForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    console.log('Form submitted, selectedRating:', selectedRating);
+                    
+                    if (selectedRating === 0) {
+                        notifications.error('يرجى اختيار تقييم');
+                        return;
+                    }
+
+                    const formData = new FormData(reviewForm);
+                    const comment = formData.get('comment') || '';
+                    
+                    console.log('Form data:', { selectedRating, comment });
+                    
+                    // Use the shared rating function
+                    submitRatingToServer(selectedRating, comment, false);
+                });
+            } else {
+                console.log('Review form not found - user may not be enrolled');
+            }
+
+            // Modal rating stars
+            const modalStars = document.querySelectorAll('.rating-star-modal');
+            modalStars.forEach((star, index) => {
+                star.addEventListener('click', function() {
+                    modalSelectedRating = index + 1;
+                    updateModalStars();
+                    document.getElementById('submitRatingBtn').disabled = false;
+                });
+
+                star.addEventListener('mouseover', function() {
+                    highlightModalStars(index + 1);
+                });
+            });
+
+            document.getElementById('modalStars').addEventListener('mouseleave', function() {
+                updateModalStars();
+            });
+
+            function updateModalStars() {
+                modalStars.forEach((star, index) => {
+                    if (index < modalSelectedRating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            function highlightModalStars(rating) {
+                modalStars.forEach((star, index) => {
+                    if (index < rating) {
+                        star.classList.add('active');
+                    } else {
+                        star.classList.remove('active');
+                    }
+                });
+            }
+
+            // Show rating modal if course is completed and not rated
+            <% if (enrolled && enrollment && enrollment.completed) { %>
+            console.log('Course completed, checking for rating modal');
+            const hasRated = localStorage.getItem('courseRated_' + '<%= course.id %>');
+            const hasSkipped = sessionStorage.getItem('ratingSkipped_' + '<%= course.id %>');
+            
+            console.log('Rating status:', { hasRated, hasSkipped });
+            
+            if (!hasRated && !hasSkipped) {
+                // Show modal after 2 seconds
+                setTimeout(() => {
+                    showRatingModal();
+                }, 2000);
+            }
+            
+            // Start hourly check
+            startRatingCheck();
+            <% } %>
+        });
+    </script>
+</body>
+</html>
+

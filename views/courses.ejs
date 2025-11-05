@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الدورات - أكاديمية العرب التقنية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <%- include('partials/header') %>
+    
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-4xl font-bold text-slate-800 mb-8">استكشف الدورات</h1>
+        
+        <!-- Filters -->
+        <div class="bg-white rounded-lg shadow p-6 mb-8">
+            <form method="GET" action="/courses" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-slate-900 font-bold mb-2">البحث</label>
+                    <input type="text" name="search" value="<%= filters.search %>"
+                           class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-slate-900 text-slate-900"
+                           placeholder="ابحث عن دورة...">
+                </div>
+
+                <div>
+                    <label class="block text-slate-900 font-bold mb-2">الفئة</label>
+                    <select name="category" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-slate-900 text-slate-900">
+                        <option value="all" <%= filters.category === 'all' ? 'selected' : '' %>>جميع الفئات</option>
+                        <% categories.forEach(cat => { %>
+                            <option value="<%= cat.category %>" <%= filters.category === cat.category ? 'selected' : '' %>>
+                                <%= cat.category %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-slate-900 font-bold mb-2">المستوى</label>
+                    <select name="level" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-slate-900 text-slate-900">
+                        <option value="all" <%= filters.level === 'all' ? 'selected' : '' %>>جميع المستويات</option>
+                        <option value="مبتدئ" <%= filters.level === 'مبتدئ' ? 'selected' : '' %>>مبتدئ</option>
+                        <option value="متوسط" <%= filters.level === 'متوسط' ? 'selected' : '' %>>متوسط</option>
+                        <option value="متقدم" <%= filters.level === 'متقدم' ? 'selected' : '' %>>متقدم</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-slate-900 font-bold mb-2">الترتيب</label>
+                    <select name="sort" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-slate-900 text-slate-900">
+                        <option value="popular" <%= filters.sort === 'popular' ? 'selected' : '' %>>الأكثر شعبية</option>
+                        <option value="rating" <%= filters.sort === 'rating' ? 'selected' : '' %>>الأعلى تقييماً</option>
+                        <option value="students" <%= filters.sort === 'students' ? 'selected' : '' %>>الأكثر طلاباً</option>
+                        <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>الأحدث</option>
+                    </select>
+                </div>
+                
+                <div class="md:col-span-4">
+                    <button type="submit" class="bg-slate-900 text-white px-6 py-2 rounded-lg hover:bg-slate-800 transition">
+                        بحث
+                    </button>
+                    <a href="/courses" class="mr-2 bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300 transition">
+                        إعادة تعيين
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Courses Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <% if (courses.length === 0) { %>
+                <div class="col-span-full text-center py-12">
+                    <p class="text-xl text-slate-600">لم يتم العثور على دورات.</p>
+                </div>
+            <% } else { %>
+                <% courses.forEach(course => { %>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition">
+                        <img src="<%= course.thumbnail_url %>" alt="<%= course.title %>" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-slate-100 text-slate-900 px-3 py-1 rounded-full text-sm">
+                                    <%= convertLevelToArabic(course.level) %>
+                                </span>
+                                <span class="text-yellow-500">★ <%= course.rating || 0 %></span>
+                            </div>
+                            <% if (course.category) { %>
+                                <span class="text-xs text-slate-500"><%= course.category %></span>
+                            <% } %>
+                            <h3 class="text-xl font-bold mb-2 mt-2"><%= course.title %></h3>
+                            <p class="text-slate-600 mb-4 line-clamp-2"><%= course.description %></p>
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-slate-500 text-sm">المدرب: <%= course.instructor_name %></span>
+                                <span class="text-slate-900 font-bold"><%= course.students_count %> طالب</span>
+                            </div>
+                            <a href="/courses/<%= course.id %>" class="block bg-slate-900 text-white text-center py-2 rounded-lg hover:bg-slate-800 transition">عرض التفاصيل</a>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

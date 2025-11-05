@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= course.title %> - التعلم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        .progress-container {
+            background: var(--gray-200);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #34d399);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .content-wrapper {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .sidebar {
+            width: 320px;
+            background: white;
+            border-left: 1px solid var(--gray-200);
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--gray-50);
+        }
+        
+        .section {
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .section-header {
+            padding: 1rem 1.5rem;
+            background: var(--gray-50);
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .section-header:hover {
+            background: var(--gray-100);
+        }
+        
+        .section-content {
+            display: none;
+        }
+        
+        .section-content.open {
+            display: block;
+        }
+        
+        .content-item {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            color: var(--gray-700);
+            border-bottom: 1px solid var(--gray-100);
+            transition: all 0.2s;
+        }
+        
+        .content-item:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+        
+        .content-item.active {
+            background: #dbeafe;
+            color: var(--primary);
+            border-right: 4px solid var(--primary);
+        }
+        
+        .content-item.completed {
+            color: var(--success);
+        }
+        
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 400px;
+            border: none;
+        }
+        
+        .responsive-video {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+        
+        .responsive-video iframe,
+        .responsive-video video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .image-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .image-container img:hover {
+            transform: scale(1.02);
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            margin: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .content-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            background: white;
+        }
+        
+        .content-body {
+            padding: 2rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-600);
+            border: 1px solid var(--gray-300);
+        }
+        
+        .btn-outline:hover {
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .btn i + i {
+            margin-left: 0.25rem;
+        }
+        
+        .quiz-card {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .question-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .option-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .option-label:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-300);
+        }
+        
+        .option-label.selected {
+            background: #dbeafe;
+            border-color: var(--primary);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            cursor: pointer;
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90%;
+            object-fit: contain;
+            border-radius: 8px;
+            animation: zoom 0.3s;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @keyframes zoom {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100vh;
+            background: white;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.open {
+            right: 0;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .content-body {
+                padding: 1rem;
+            }
+            
+            .video-player {
+                height: 250px;
+            }
+            
+            .responsive-video {
+                padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
+            }
+            
+            .content-card {
+                margin: 1rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+            }
+            
+            .mobile-menu-btn {
+                display: block !important;
+            }
+            
+            .header {
+                padding: 0.75rem 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <a href="/dashboard" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600); text-decoration: none;">
+                        <i class="fas fa-arrow-right"></i>
+                        <span>العودة للوحة التحكم</span>
+                    </a>
+                    <div style="width: 1px; height: 1.5rem; background: var(--gray-300);"></div>
+                    <h1 style="font-size: 1.25rem; font-weight: 700; color: var(--gray-900); margin: 0;"><%= course.title %></h1>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--gray-600);">
+                            <i class="fas fa-chart-line"></i>
+                        <span>التقدم:</span>
+                        <span style="font-weight: 700; color: var(--success);"><%= enrollment.progress %>%</span>
+                        </div>
+                    <button onclick="toggleMobileMenu()" style="display: none; background: none; border: none; color: var(--gray-600); padding: 0.5rem;" class="mobile-menu-btn">
+                        <i class="fas fa-bars" style="font-size: 1.25rem;"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar" data-progress="<%= enrollment.progress %>"></div>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div style="padding: 1.5rem;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h2 style="font-weight: 700; font-size: 1.125rem; color: var(--gray-800); margin: 0;">محتوى الدورة</h2>
+                        </div>
+                    <div>
+                        <% sections.forEach((section, sIndex) => { %>
+                            <div class="section">
+                                <div class="section-header" data-section-index="<%= sIndex %>" onclick="toggleSection(this.dataset.sectionIndex)">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <i class="fas fa-chevron-down" id="chevron-<%= sIndex %>" style="color: var(--gray-500); font-size: 0.875rem; transition: transform 0.2s;"></i>
+                                            <span style="font-weight: 600; color: var(--gray-800);"><%= section.title %></span>
+                                    </div>
+                                        <span style="font-size: 0.75rem; color: var(--gray-500); background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 9999px;">
+                                        <%= section.contents.length %>
+                                    </span>
+                                </div>
+                                </div>
+                                <div id="section-<%= sIndex %>" class="section-content<%= sIndex === 0 ? ' open' : '' %>">
+                                    <% section.contents.forEach(content => { %>
+                                        <a href="/learn/<%= course.id %>?content=<%= content.id %>"
+                                           class="content-item <%= currentContent && currentContent.id === content.id ? 'active' : '' %> <%= content.completed ? 'completed' : '' %>">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="flex-shrink: 0;">
+                                                    <% if (content.type === 'video') { %>
+                                                        <div style="width: 2rem; height: 2rem; background: #fef2f2; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-play" style="color: #dc2626; font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else if (content.type === 'quiz') { %>
+                                                        <div style="width: 2rem; height: 2rem; background: #eff6ff; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-question-circle" style="color: #2563eb; font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div style="width: 2rem; height: 2rem; background: var(--gray-100); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-file-alt" style="color: var(--gray-600); font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <div style="font-size: 0.875rem; font-weight: 500; color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        <%= content.title %>
+                                                    </div>
+                                                    <% if (content.duration) { %>
+                                                        <div style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                                                            <i class="fas fa-clock" style="margin-left: 0.25rem;"></i>
+                                                            <%= Math.floor(content.duration / 60) %> دقيقة
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div style="flex-shrink: 0;">
+                                                    <% if (content.completed) { %>
+                                                        <div style="width: 1.5rem; height: 1.5rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-check" style="color: var(--success); font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div style="width: 1.5rem; height: 1.5rem; border: 2px solid var(--gray-300); border-radius: 50%;"></div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="mobile-menu">
+                <div style="padding: 1.5rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+                        <h2 style="font-weight: 700; font-size: 1.125rem; color: var(--gray-800); margin: 0;">محتوى الدورة</h2>
+                        <button onclick="toggleMobileMenu()" style="background: none; border: none; color: var(--gray-500); padding: 0.5rem;">
+                            <i class="fas fa-times" style="font-size: 1.25rem;"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <% sections.forEach((section, sIndex) => { %>
+                            <div class="section">
+                                <div class="section-header" data-section-index="<%= sIndex %>" onclick="toggleMobileSection(this.dataset.sectionIndex)">
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                            <i class="fas fa-chevron-down" id="mobile-chevron-<%= sIndex %>" style="color: var(--gray-500); font-size: 0.875rem; transition: transform 0.2s;"></i>
+                                            <span style="font-weight: 600; color: var(--gray-800);"><%= section.title %></span>
+                                    </div>
+                                        <span style="font-size: 0.75rem; color: var(--gray-500); background: var(--gray-200); padding: 0.25rem 0.5rem; border-radius: 9999px;">
+                                        <%= section.contents.length %>
+                                    </span>
+                                </div>
+                                </div>
+                                <div id="mobile-section-<%= sIndex %>" class="section-content<%= sIndex === 0 ? ' open' : '' %>">
+                                    <% section.contents.forEach(content => { %>
+                                        <a href="/learn/<%= course.id %>?content=<%= content.id %>"
+                                           class="content-item <%= currentContent && currentContent.id === content.id ? 'active' : '' %> <%= content.completed ? 'completed' : '' %>"
+                                           onclick="toggleMobileMenu()">
+                                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                <div style="flex-shrink: 0;">
+                                                    <% if (content.type === 'video') { %>
+                                                        <div style="width: 2rem; height: 2rem; background: #fef2f2; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-play" style="color: #dc2626; font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else if (content.type === 'quiz') { %>
+                                                        <div style="width: 2rem; height: 2rem; background: #eff6ff; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-question-circle" style="color: #2563eb; font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div style="width: 2rem; height: 2rem; background: var(--gray-100); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-file-alt" style="color: var(--gray-600); font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div style="flex: 1; min-width: 0;">
+                                                    <div style="font-size: 0.875rem; font-weight: 500; color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                                        <%= content.title %>
+                                                    </div>
+                                                    <% if (content.duration) { %>
+                                                        <div style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
+                                                            <i class="fas fa-clock" style="margin-left: 0.25rem;"></i>
+                                                            <%= Math.floor(content.duration / 60) %> دقيقة
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <div style="flex-shrink: 0;">
+                                                    <% if (content.completed) { %>
+                                                        <div style="width: 1.5rem; height: 1.5rem; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                                            <i class="fas fa-check" style="color: var(--success); font-size: 0.75rem;"></i>
+                                                        </div>
+                                                    <% } else { %>
+                                                        <div style="width: 1.5rem; height: 1.5rem; border: 2px solid var(--gray-300); border-radius: 50%;"></div>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Overlay for mobile -->
+            <div id="overlay" class="overlay" onclick="toggleMobileMenu()"></div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <% if (currentContent) { %>
+                    <div class="content-card">
+                        <div class="content-header">
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <div style="flex-shrink: 0;">
+                                    <% if (currentContent.type === 'video') { %>
+                                        <div style="width: 3rem; height: 3rem; background: #fef2f2; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-play" style="color: #dc2626; font-size: 1.125rem;"></i>
+                                        </div>
+                                    <% } else if (currentContent.type === 'quiz') { %>
+                                        <div style="width: 3rem; height: 3rem; background: #eff6ff; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-question-circle" style="color: #2563eb; font-size: 1.125rem;"></i>
+                                        </div>
+                                    <% } else { %>
+                                        <div style="width: 3rem; height: 3rem; background: var(--gray-100); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-file-alt" style="color: var(--gray-600); font-size: 1.125rem;"></i>
+                                        </div>
+                                    <% } %>
+                                </div>
+                                <div style="flex: 1;">
+                                    <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin: 0 0 0.5rem 0;"><%= currentContent.title %></h2>
+                                    <div style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; color: var(--gray-600);">
+                                        <% if (currentContent.duration) { %>
+                                            <div style="display: flex; align-items: center; gap: 0.25rem;">
+                                                <i class="fas fa-clock"></i>
+                                                <span><%= Math.floor(currentContent.duration / 60) %> دقيقة</span>
+                                            </div>
+                                        <% } %>
+                                        <div style="display: flex; align-items: center; gap: 0.25rem;">
+                                            <i class="fas fa-layer-group"></i>
+                                            <span><%= currentContent.type === 'video' ? 'فيديو' : currentContent.type === 'quiz' ? 'اختبار' : 'مستند' %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-body">
+                    
+                            <% if (currentContent.type === 'video') { %>
+                                <!-- Video Player -->
+                                <div class="video-container">
+                                    <% if (currentContent.url.includes('youtube.com') || currentContent.url.includes('youtu.be')) { %>
+                                        <% const videoId = currentContent.url.includes('youtu.be') ? currentContent.url.split('/').pop() : new URL(currentContent.url).searchParams.get('v'); %>
+                                        <div style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%; /* 16:9 aspect ratio */">
+                                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                                    src="https://www.youtube.com/embed/<%= videoId %>?rel=0&modestbranding=1" 
+                                                    frameborder="0" 
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                    allowfullscreen></iframe>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="responsive-video">
+                                            <video id="contentVideo" 
+                                                   controls 
+                                                   preload="metadata"
+                                                   poster="<%= currentContent.thumbnail_url || '' %>">
+                                                <source src="<%= currentContent.url %>" type="video/mp4">
+                                                <source src="<%= currentContent.url %>" type="video/webm">
+                                                <source src="<%= currentContent.url %>" type="video/ogg">
+                                                متصفحك لا يدعم تشغيل الفيديو.
+                                            </video>
+                                        </div>
+                                    <% } %>
+                                </div>
+                        
+                                <% if (currentContent.description) { %>
+                                    <div style="margin-bottom: 2rem;">
+                                        <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-info-circle" style="color: var(--primary);"></i>
+                                            الوصف
+                                        </h3>
+                                        <div style="background: var(--gray-50); border-radius: 0.5rem; padding: 1.5rem;">
+                                            <p style="color: var(--gray-700); white-space: pre-line; line-height: 1.6; margin: 0;"><%= currentContent.description %></p>
+                                        </div>
+                                    </div>
+                                <% } %>
+                                
+                                <div class="navigation-buttons">
+                                    <button data-content-id="<%= currentContent.id %>" data-course-id="<%= course.id %>" 
+                                            class="btn btn-success mark-complete-btn">
+                                        <i class="fas fa-check"></i>
+                                        <span><%= currentContent.completed ? '✓ مكتمل' : 'وضع علامة كمكتمل' %></span>
+                                    </button>
+                                </div>
+                        
+                            <% } else if (currentContent.type === 'quiz') { %>
+                                <!-- Quiz Interface -->
+                                <% if (currentContent.quiz) { %>
+                                    <div class="quiz-card mb-8">
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <i class="fas fa-info-circle text-blue-600"></i>
+                                            <h3 class="text-lg font-semibold text-blue-900">معلومات الاختبار</h3>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                            <div class="bg-white rounded-lg p-4 text-center">
+                                                <div class="text-2xl font-bold text-blue-600"><%= currentContent.questions.length %></div>
+                                                <div class="text-sm text-gray-600">عدد الأسئلة</div>
+                                            </div>
+                                            <div class="bg-white rounded-lg p-4 text-center">
+                                                <div class="text-2xl font-bold text-green-600"><%= currentContent.quiz.passing_score %>%</div>
+                                                <div class="text-sm text-gray-600">درجة النجاح</div>
+                                            </div>
+                                            <% if (currentContent.quiz.time_limit > 0) { %>
+                                                <div class="bg-white rounded-lg p-4 text-center">
+                                                    <div class="text-2xl font-bold text-orange-600"><%= currentContent.quiz.time_limit %></div>
+                                                    <div class="text-sm text-gray-600">دقيقة</div>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                        
+                                        <% if (currentContent.lastAttempt) { %>
+                                            <div class="bg-<%= currentContent.lastAttempt.passed ? 'green' : 'yellow' %>-50 border border-<%= currentContent.lastAttempt.passed ? 'green' : 'yellow' %>-200 rounded-lg p-6 mb-6">
+                                                <div class="flex items-center gap-3 mb-3">
+                                                    <i class="fas fa-<%= currentContent.lastAttempt.passed ? 'check-circle' : 'exclamation-triangle' %> text-<%= currentContent.lastAttempt.passed ? 'green' : 'yellow' %>-600"></i>
+                                                    <h4 class="font-bold text-<%= currentContent.lastAttempt.passed ? 'green' : 'yellow' %>-900">آخر محاولة</h4>
+                                                </div>
+                                                <div class="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <span class="text-sm text-gray-600">النتيجة:</span>
+                                                        <span class="font-bold text-lg"><%= currentContent.lastAttempt.score %>/<%= currentContent.lastAttempt.total_questions %></span>
+                                                    </div>
+                                                    <div>
+                                                        <span class="text-sm text-gray-600">الحالة:</span>
+                                                        <span class="font-bold text-lg text-<%= currentContent.lastAttempt.passed ? 'green' : 'yellow' %>-600">
+                                                            <%= currentContent.lastAttempt.passed ? 'ناجح ✓' : 'يحتاج إعادة' %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <form id="quiz-form" data-quiz-id="<%= currentContent.quiz.id %>" data-content-id="<%= currentContent.id %>" data-course-id="<%= course.id %>">
+                                        <% currentContent.questions.forEach((q, qIndex) => { %>
+                                            <div class="question-card">
+                                                <div class="flex items-start gap-4">
+                                                    <div class="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-indigo-600 font-bold text-sm"><%= qIndex + 1 %></span>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="font-bold text-gray-900 mb-4 text-lg"><%= q.question %></p>
+                                                        <% const options = JSON.parse(q.options); %>
+                                                        <div class="space-y-2">
+                                                            <% options.forEach((option, oIndex) => { %>
+                                                                <label class="option-label">
+                                                                    <input type="radio" name="question-<%= q.id %>" value="<%= option %>" required class="ml-3">
+                                                                    <span class="text-gray-800"><%= option %></span>
+                                                                </label>
+                                                            <% }) %>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                        
+                                        <div class="navigation-buttons">
+                                            <button type="button" class="btn btn-success" onclick="submitAndNext()">
+                                                <i class="fas fa-paper-plane"></i>
+                                                <i class="fas fa-arrow-left"></i>
+                                                <span>إرسال والانتقال</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                <% } %>
+                        
+                            <% } else { %>
+                                <!-- Document/PDF/Image Content -->
+                                <% if (currentContent.description) { %>
+                                    <div class="mb-8">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                            <i class="fas fa-info-circle text-indigo-600"></i>
+                                            الوصف
+                                        </h3>
+                                        <div class="bg-gray-50 rounded-lg p-6">
+                                            <p class="text-gray-700 whitespace-pre-line leading-relaxed"><%= currentContent.description %></p>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            
+                            <% if (currentContent.url) { %>
+                                <% 
+                                    const fileExtension = currentContent.url.split('.').pop().toLowerCase();
+                                    const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico'].includes(fileExtension);
+                                    const isVideo = ['mp4', 'webm', 'ogg', 'avi', 'mov', 'wmv', 'flv', 'mkv', '3gp', 'm4v', 'mpg', 'mpeg', 'm2v', 'asf', 'rm', 'rmvb', 'vob', 'ts', 'mts', 'm2ts'].includes(fileExtension);
+                                    const isPDF = fileExtension === 'pdf';
+                                %>
+                                
+                                <% if (isImage) { %>
+                                    <!-- عرض الصور -->
+                                    <div class="image-container">
+                                            <img src="<%= currentContent.url %>" 
+                                                 alt="<%= currentContent.title %>" 
+                                                 onclick="openImageModal('<%= currentContent.url %>', '<%= currentContent.title %>')">
+                                    </div>
+                                <% } else if (isVideo) { %>
+                                    <!-- مشغل فيديو -->
+                                    <div class="video-container">
+                                        <div class="responsive-video">
+                                            <video id="contentVideo" 
+                                                   controls 
+                                                   preload="metadata"
+                                                   poster="<%= currentContent.thumbnail_url || '' %>">
+                                                <source src="<%= currentContent.url %>" type="video/<%= fileExtension %>">
+                                                <source src="<%= currentContent.url %>" type="video/mp4">
+                                                <source src="<%= currentContent.url %>" type="video/webm">
+                                                <source src="<%= currentContent.url %>" type="video/ogg">
+                                                متصفحك لا يدعم تشغيل الفيديو.
+                                            </video>
+                                        </div>
+                                    </div>
+                                <% } else if (isPDF) { %>
+                                    <!-- عرض PDF -->
+                                    <div style="margin-bottom: 2rem;">
+                                            <iframe src="<%= currentContent.url %>" 
+                                                    width="100%" 
+                                                    height="600" 
+                                                style="border-radius: 0.5rem; border: none;"
+                                                    frameborder="0">
+                                            </iframe>
+                                    </div>
+                                <% } else { %>
+                                    <!-- ملفات أخرى -->
+                                    <div style="text-align: center; margin-bottom: 2rem; padding: 3rem; background: var(--gray-50); border: 2px dashed var(--gray-300); border-radius: 0.75rem;">
+                                        <div style="font-size: 4rem; color: var(--primary); margin-bottom: 1rem;">
+                                                <% if (fileExtension === 'doc' || fileExtension === 'docx') { %>
+                                                <i class="fas fa-file-word" style="color: #2563eb;"></i>
+                                                <% } else if (fileExtension === 'ppt' || fileExtension === 'pptx') { %>
+                                                <i class="fas fa-file-powerpoint" style="color: #ea580c;"></i>
+                                                <% } else if (fileExtension === 'xls' || fileExtension === 'xlsx') { %>
+                                                <i class="fas fa-file-excel" style="color: #16a34a;"></i>
+                                                <% } else if (fileExtension === 'zip' || fileExtension === 'rar') { %>
+                                                <i class="fas fa-file-archive" style="color: #9333ea;"></i>
+                                                <% } else { %>
+                                                <i class="fas fa-file" style="color: var(--gray-600);"></i>
+                                                <% } %>
+                                            </div>
+                                        <h4 style="font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-bottom: 0.5rem;"><%= currentContent.title %></h4>
+                                        <p style="color: var(--gray-600); margin-bottom: 1.5rem;">نوع الملف: <%= fileExtension.toUpperCase() %></p>
+                                            <a href="<%= currentContent.url %>" 
+                                               target="_blank" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-download"></i>
+                                                تحميل الملف
+                                            </a>
+                                    </div>
+                                <% } %>
+                                <% } %>
+                                
+                                <div class="navigation-buttons">
+                                    <button data-content-id="<%= currentContent.id %>" data-course-id="<%= course.id %>" 
+                                            class="btn btn-success mark-complete-btn">
+                                        <i class="fas fa-check"></i>
+                                        <span><%= currentContent.completed ? '✓ مكتمل' : 'وضع علامة كمكتمل' %></span>
+                                    </button>
+                                </div>
+                            <% } %>
+                        </div>
+                </div>
+                <% } else { %>
+                    <div class="content-card">
+                        <div class="content-body" style="text-align: center;">
+                            <div style="width: 6rem; height: 6rem; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                                <i class="fas fa-play" style="color: var(--primary); font-size: 2rem;"></i>
+                            </div>
+                            <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--gray-900); margin-bottom: 1rem;">مرحباً بك في الدورة!</h3>
+                            <p style="font-size: 1.125rem; color: var(--gray-600); margin-bottom: 2rem;">اختر محاضرة من القائمة الجانبية للبدء في التعلم</p>
+                            <button onclick="toggleMobileMenu()" class="btn btn-primary mobile-menu-btn" style="display: none;">
+                                <i class="fas fa-list"></i>
+                                    عرض المحتوى
+                                </button>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Professional Notification System -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="image-modal-close" onclick="closeImageModal()">&times;</span>
+        <img class="image-modal-content" id="modalImage">
+    </div>
+
+    <script>
+        // Notification System
+        class NotificationSystem {
+            constructor() {
+                this.container = document.getElementById('notification-container');
+            }
+
+            show(message, type = 'info', duration = 5000) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                
+                const colors = this.getColors(type);
+                const icon = this.getIcon(type);
+                
+                notification.innerHTML = `
+                    <div style="display: flex; align-items: center; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border-right: 4px solid ${colors.border}; background: ${colors.bg}; max-width: 24rem;">
+                        <div style="flex-shrink: 0; margin-left: 0.75rem;">
+                            ${icon}
+                        </div>
+                        <div style="flex: 1;">
+                            <p style="font-size: 0.875rem; font-weight: 500; color: ${colors.text}; margin: 0;">${message}</p>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" style="flex-shrink: 0; color: ${colors.text}; background: none; border: none; cursor: pointer; padding: 0.25rem;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                this.container.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, duration);
+                
+                return notification;
+            }
+
+            getIcon(type) {
+                const icons = {
+                    success: '<i class="fas fa-check-circle" style="color: var(--success); font-size: 1.25rem;"></i>',
+                    error: '<i class="fas fa-exclamation-circle" style="color: var(--danger); font-size: 1.25rem;"></i>',
+                    warning: '<i class="fas fa-exclamation-triangle" style="color: var(--warning); font-size: 1.25rem;"></i>',
+                    info: '<i class="fas fa-info-circle" style="color: var(--primary); font-size: 1.25rem;"></i>'
+                };
+                return icons[type] || icons.info;
+            }
+
+            getColors(type) {
+                const colors = {
+                    success: { bg: '#dcfce7', border: '#16a34a', text: '#166534' },
+                    error: { bg: '#fef2f2', border: '#dc2626', text: '#991b1b' },
+                    warning: { bg: '#fef3c7', border: '#d97706', text: '#92400e' },
+                    info: { bg: '#dbeafe', border: '#2563eb', text: '#1e40af' }
+                };
+                return colors[type] || colors.info;
+            }
+
+            success(message, duration) { return this.show(message, 'success', duration); }
+            error(message, duration) { return this.show(message, 'error', duration); }
+            warning(message, duration) { return this.show(message, 'warning', duration); }
+            info(message, duration) { return this.show(message, 'info', duration); }
+        }
+
+        // Global notification system
+        window.notifications = new NotificationSystem();
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize progress bar
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                const progress = progressBar.getAttribute('data-progress');
+                progressBar.style.width = progress + '%';
+            }
+            
+            // Add click listeners to mark complete buttons
+            document.querySelectorAll('.mark-complete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const contentId = this.getAttribute('data-content-id');
+                    const courseId = this.getAttribute('data-course-id');
+                    markComplete(contentId, courseId);
+                });
+            });
+            
+            // Add submit listener to quiz form
+            const quizForm = document.getElementById('quiz-form');
+            if (quizForm) {
+                quizForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const quizId = this.getAttribute('data-quiz-id');
+                    const contentId = this.getAttribute('data-content-id');
+                    const courseId = this.getAttribute('data-course-id');
+                    submitQuiz(event, quizId, contentId, courseId);
+                });
+            }
+
+            // Show mobile menu button on mobile
+            if (window.innerWidth < 768) {
+                document.querySelector('.mobile-menu-btn').style.display = 'block';
+            }
+        });
+        
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('overlay');
+            
+            mobileMenu.classList.toggle('open');
+                overlay.classList.toggle('show');
+        }
+        
+        function toggleSection(index) {
+            const section = document.getElementById('section-' + index);
+            const chevron = document.getElementById('chevron-' + index);
+            
+            if (section) {
+                section.classList.toggle('open');
+                if (chevron) {
+                    chevron.style.transform = section.classList.contains('open') ? 'rotate(0deg)' : 'rotate(-90deg)';
+                }
+            }
+        }
+
+        function toggleMobileSection(index) {
+            const section = document.getElementById('mobile-section-' + index);
+            const chevron = document.getElementById('mobile-chevron-' + index);
+            
+            if (section) {
+                section.classList.toggle('open');
+                if (chevron) {
+                    chevron.style.transform = section.classList.contains('open') ? 'rotate(0deg)' : 'rotate(-90deg)';
+                }
+            }
+        }
+        
+        async function markComplete(contentId, courseId) {
+            try {
+                const response = await fetch('/api/content/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contentId, courseId })
+                });
+                
+                const data = await response.json();
+                console.log('Mark complete response:', data);
+                
+                if (data.success) {
+                    notifications.success('تم وضع علامة كمكتمل بنجاح!');
+                    
+                    // Update button state
+                    const button = document.querySelector(`button[data-content-id="${contentId}"][data-course-id="${courseId}"]`);
+                    if (button) {
+                        const span = button.querySelector('span');
+                        if (span) {
+                            span.textContent = '✓ مكتمل';
+                        } else {
+                            button.textContent = '✓ مكتمل';
+                        }
+                        button.style.background = 'var(--success)';
+                    }
+                    
+                    // Update progress bar
+                    updateProgressBar(data.progress);
+                    
+                    // Check if course is completed
+                    if (data.progress >= 100) {
+                        notifications.success('تهانينا! لقد أكملت هذه الدورة بنجاح!');
+                        setTimeout(() => {
+                            window.location.href = '/certificates';
+                        }, 3000);
+                    } else if (data.nextContent) {
+                        // Auto-redirect to next content after 2 seconds
+                        console.log('Next content found:', data.nextContent);
+                        notifications.info('سيتم الانتقال للقسم التالي خلال ثانيتين...');
+                        setTimeout(() => {
+                            window.location.href = `/learn/${courseId}?content=${data.nextContent.id}`;
+                        }, 2000);
+                    } else {
+                        console.log('No next content found');
+                    }
+                } else {
+                    notifications.error('حدث خطأ أثناء التحديث');
+                }
+            } catch (error) {
+                console.error('Error marking complete:', error);
+                notifications.error('حدث خطأ في الاتصال');
+            }
+        }
+        
+        async function submitQuiz(event, quizId, contentId, courseId) {
+            event.preventDefault();
+            const form = event.target;
+            const formData = new FormData(form);
+            const answers = {};
+            
+            for (let [key, value] of formData.entries()) {
+                const questionId = key.replace('question-', '');
+                answers[questionId] = value;
+            }
+            
+            // Disable submit button and show loading state
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>جاري الإرسال...</span>';
+            
+            try {
+            const response = await fetch('/api/quiz/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quizId, contentId, courseId, answers })
+            });
+            
+            const data = await response.json();
+                console.log('Quiz submission response:', data);
+                
+            if (data.success) {
+                if (data.passed) {
+                    notifications.success(`تهانينا! لقد نجحت في الاختبار - نتيجتك: ${data.score}/${data.results.length} - درجة النجاح: ${data.passingScore}%`);
+                        
+                        // Update button state
+                        submitButton.innerHTML = '<i class="fas fa-check"></i><span>✓ تم الإرسال بنجاح</span>';
+                        submitButton.style.background = 'var(--success)';
+                        
+                        // Update progress bar
+                        if (data.progress) {
+                            updateProgressBar(data.progress);
+                        }
+                        
+                        // Check if course is completed
+                        if (data.progress >= 100) {
+                            notifications.success('تهانينا! لقد أكملت هذه الدورة بنجاح!');
+                            setTimeout(() => {
+                                window.location.href = '/certificates';
+                            }, 3000);
+                        } else if (data.nextContent) {
+                            // Auto-redirect to next content after 3 seconds
+                            console.log('Next content found:', data.nextContent);
+                            notifications.info('سيتم الانتقال للقسم التالي خلال 3 ثواني...');
+                            setTimeout(() => {
+                                window.location.href = `/learn/${courseId}?content=${data.nextContent.id}`;
+                            }, 3000);
+                } else {
+                            // Just reload to show updated state
+                            console.log('No next content found, reloading page');
+                            setTimeout(() => window.location.reload(), 2000);
+                        }
+                    } else {
+                        notifications.warning(`للأسف، لم تنجح في الاختبار - نتيجتك: ${data.score}/${data.results.length} - درجة النجاح المطلوبة: ${data.passingScore}%`);
+                        
+                        // Reset button state
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalText;
+                        
+                setTimeout(() => window.location.reload(), 2000);
+                    }
+            } else {
+                notifications.error('حدث خطأ أثناء إرسال الإجابات');
+                    
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                notifications.error('حدث خطأ في الاتصال');
+                
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }
+
+        // Update progress bar
+        function updateProgressBar(progress) {
+            const progressBar = document.getElementById('progress-bar');
+            if (progressBar) {
+                progressBar.style.width = progress + '%';
+            }
+            const progressText = document.querySelector('.text-indigo-600');
+            if (progressText) {
+                progressText.textContent = progress + '%';
+            }
+        }
+
+        // Submit quiz and navigate to next content
+        async function submitAndNext() {
+            const form = document.getElementById('quiz-form');
+            if (!form) return;
+            
+            const quizId = form.getAttribute('data-quiz-id');
+            const contentId = form.getAttribute('data-content-id');
+            const courseId = form.getAttribute('data-course-id');
+            
+            // Get form data
+            const formData = new FormData(form);
+            const answers = {};
+            
+            for (let [key, value] of formData.entries()) {
+                const questionId = key.replace('question-', '');
+                answers[questionId] = value;
+            }
+            
+            // Check if all questions are answered
+            const requiredInputs = form.querySelectorAll('input[type="radio"][required]');
+            const answeredQuestions = new Set();
+            requiredInputs.forEach(input => {
+                if (input.checked) {
+                    const questionId = input.name.replace('question-', '');
+                    answeredQuestions.add(questionId);
+                }
+            });
+            
+            if (answeredQuestions.size < requiredInputs.length / 4) { // Assuming 4 options per question
+                notifications.warning('يرجى الإجابة على جميع الأسئلة قبل الإرسال');
+                return;
+            }
+            
+            // Disable button and show loading
+            const submitButton = document.querySelector('button[onclick="submitAndNext()"]');
+            const originalText = submitButton.innerHTML;
+            
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>جاري الإرسال...</span>';
+            
+            try {
+                const response = await fetch('/api/quiz/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ quizId, contentId, courseId, answers })
+                });
+                
+                const data = await response.json();
+                console.log('Submit and next response:', data);
+                
+                if (data.success) {
+                    if (data.passed) {
+                        notifications.success(`تهانينا! لقد نجحت في الاختبار - نتيجتك: ${data.score}/${data.results.length} - درجة النجاح: ${data.passingScore}%`);
+                        
+                        // Update button state
+                        submitButton.innerHTML = '<i class="fas fa-check"></i><span>✓ تم الإرسال</span>';
+                        submitButton.style.background = 'var(--success)';
+                        
+                        // Update progress bar
+                        if (data.progress) {
+                            updateProgressBar(data.progress);
+                        }
+                        
+                        // Check if course is completed
+                        if (data.progress >= 100) {
+                            notifications.success('تهانينا! لقد أكملت هذه الدورة بنجاح!');
+                            setTimeout(() => {
+                                window.location.href = '/certificates';
+                            }, 2000);
+                        } else if (data.nextContent) {
+                            // Auto-redirect to next content after 2 seconds
+                            console.log('Next content found:', data.nextContent);
+                            notifications.info('سيتم الانتقال للقسم التالي خلال ثانيتين...');
+                            setTimeout(() => {
+                                window.location.href = `/learn/${courseId}?content=${data.nextContent.id}`;
+                            }, 2000);
+            } else {
+                            // Mark content as complete first, then find next content
+                            console.log('No next content in response, marking complete and searching...');
+                            notifications.info('جاري البحث عن القسم التالي...');
+                            
+                            // First mark the content as complete
+                            await markContentComplete(contentId, courseId);
+                        }
+                    } else {
+                        notifications.warning(`للأسف، لم تنجح في الاختبار - نتيجتك: ${data.score}/${data.results.length} - درجة النجاح المطلوبة: ${data.passingScore}%`);
+                        
+                        // Reset button state
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = originalText;
+                        
+                        setTimeout(() => window.location.reload(), 2000);
+                    }
+                } else {
+                    notifications.error('حدث خطأ أثناء إرسال الإجابات');
+                    
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                notifications.error('حدث خطأ في الاتصال');
+                
+                // Reset button state
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }
+
+        // Mark content as complete (same logic as markComplete)
+        async function markContentComplete(contentId, courseId) {
+            try {
+                const response = await fetch('/api/content/complete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contentId, courseId })
+                });
+                
+                const data = await response.json();
+                console.log('Mark content complete response:', data);
+                
+                if (data.success) {
+                    // Update progress bar
+                    if (data.progress) {
+                        updateProgressBar(data.progress);
+                    }
+                    
+                    // Check if course is completed
+                    if (data.progress >= 100) {
+                        notifications.success('تهانينا! لقد أكملت هذه الدورة بنجاح!');
+                        setTimeout(() => {
+            window.location.href = '/certificates';
+                        }, 2000);
+                    } else if (data.nextContent) {
+                        // Found next content in mark complete response
+                        console.log('Next content found in mark complete:', data.nextContent);
+                        notifications.info('تم العثور على القسم التالي، سيتم الانتقال الآن...');
+                        setTimeout(() => {
+                            window.location.href = `/learn/${courseId}?content=${data.nextContent.id}`;
+                        }, 1000);
+                    } else {
+                        // No next content found
+                        console.log('No next content found in mark complete');
+                        notifications.warning('لا يوجد قسم تالي متاح');
+                    }
+                } else {
+                    console.error('Failed to mark content complete:', data.error);
+                    notifications.error('حدث خطأ أثناء وضع علامة كمكتمل');
+                }
+            } catch (error) {
+                console.error('Error marking content complete:', error);
+                notifications.error('حدث خطأ في الاتصال');
+            }
+        }
+
+        // Find and navigate to next content
+        async function findAndGoToNextContent(courseId, currentContentId) {
+            try {
+                const response = await fetch(`/api/course/${courseId}/next-content/${currentContentId}`);
+                const data = await response.json();
+                
+                if (data.success && data.nextContent) {
+                    notifications.info('تم العثور على القسم التالي، سيتم الانتقال الآن...');
+                    setTimeout(() => {
+                        window.location.href = `/learn/${courseId}?content=${data.nextContent.id}`;
+                    }, 1000);
+                } else {
+                    notifications.warning('لا يوجد قسم تالي متاح');
+                }
+            } catch (error) {
+                console.error('Error finding next content:', error);
+                notifications.warning('لا يمكن العثور على القسم التالي');
+            }
+        }
+
+        // Image Modal Functions
+        function openImageModal(imageSrc, imageTitle) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+            modalImg.alt = imageTitle;
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                closeImageModal();
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة محتوى الدورة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="bg-indigo-600 text-white shadow-lg">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">إدارة محتوى الدورة</h1>
+                <a href="/admin/dashboard" class="bg-white text-indigo-600 px-4 py-2 rounded hover:bg-gray-100">
+                    العودة للوحة التحكم
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-2xl font-bold mb-2"><%= course.title %></h2>
+            <p class="text-gray-600"><%= course.description %></p>
+        </div>
+
+        <!-- Add Section Form -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h3 class="text-xl font-bold mb-4">إضافة قسم جديد</h3>
+            <form method="POST" action="/admin/sections" class="flex gap-4">
+                <input type="hidden" name="courseId" value="<%= course.id %>">
+                <input type="text" name="title" required placeholder="عنوان القسم"
+                       class="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:border-indigo-500">
+                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                    إضافة قسم
+                </button>
+            </form>
+        </div>
+
+        <!-- Sections List -->
+        <div class="space-y-4">
+            <% if (sections.length === 0) { %>
+                <div class="bg-white rounded-lg shadow p-8 text-center text-gray-500">
+                    لا توجد أقسام بعد. ابدأ بإضافة قسم جديد!
+                </div>
+            <% } else { %>
+                <% sections.forEach((section, sIndex) => { %>
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="bg-indigo-50 p-4 flex justify-between items-center">
+                            <h3 class="text-xl font-bold">القسم <%= sIndex + 1 %>: <%= section.title %></h3>
+                            <div class="flex gap-2">
+                                <button onclick="toggleAddContent(<%= section.id %>)" 
+                                        class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">
+                                    + إضافة محتوى
+                                </button>
+                                <button onclick="deleteSection(<%= section.id %>)" 
+                                        class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm">
+                                    حذف القسم
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Add Content Form (Hidden by default) -->
+                        <div id="add-content-<%= section.id %>" class="hidden p-4 bg-gray-50 border-t">
+                            <h4 class="font-bold mb-3">إضافة محتوى جديد</h4>
+                            <form method="POST" action="/admin/contents" enctype="multipart/form-data">
+                                <input type="hidden" name="sectionId" value="<%= section.id %>">
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-bold mb-2">نوع المحتوى</label>
+                                        <select name="type" onchange="toggleContentType(this, <%= section.id %>)" 
+                                                class="w-full px-3 py-2 border rounded-lg">
+                                            <option value="video">فيديو</option>
+                                            <option value="document">مستند</option>
+                                            <option value="quiz">اختبار</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-bold mb-2">العنوان</label>
+                                        <input type="text" name="title" required 
+                                               class="w-full px-3 py-2 border rounded-lg"
+                                               placeholder="عنوان المحتوى">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-sm font-bold mb-2">الوصف</label>
+                                    <textarea name="description" rows="2" 
+                                              class="w-full px-3 py-2 border rounded-lg"
+                                              placeholder="وصف مختصر للمحتوى"></textarea>
+                                </div>
+
+                                <div class="mb-4 content-url-field-<%= section.id %>">
+                                    <label class="block text-sm font-bold mb-2">رابط المحتوى</label>
+                                    <input type="url" name="content_url" 
+                                           class="w-full px-3 py-2 border rounded-lg"
+                                           placeholder="https://youtube.com/watch?v=...">
+                                    <p class="text-xs text-gray-500 mt-1">أو ارفع ملف:</p>
+                                    <input type="file" name="content_file" 
+                                           class="w-full px-3 py-2 border rounded-lg mt-1">
+                                </div>
+
+                                <div class="mb-4 content-url-field-<%= section.id %>">
+                                    <label class="block text-sm font-bold mb-2">المدة (بالثواني)</label>
+                                    <input type="number" name="duration" min="0" 
+                                           class="w-full px-3 py-2 border rounded-lg"
+                                           placeholder="مثال: 600 (10 دقائق)">
+                                </div>
+
+                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                                    إضافة المحتوى
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Contents List -->
+                        <div class="p-4">
+                            <% if (section.contents.length === 0) { %>
+                                <p class="text-gray-500 text-center py-4">لا يوجد محتوى في هذا القسم</p>
+                            <% } else { %>
+                                <div class="space-y-2">
+                                    <% section.contents.forEach((content, cIndex) => { %>
+                                        <div class="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50">
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-2xl">
+                                                    <% if (content.type === 'video') { %>
+                                                        🎥
+                                                    <% } else if (content.type === 'quiz') { %>
+                                                        📝
+                                                    <% } else { %>
+                                                        📄
+                                                    <% } %>
+                                                </span>
+                                                <div>
+                                                    <p class="font-bold"><%= content.title %></p>
+                                                    <p class="text-sm text-gray-500">
+                                                        النوع: <%= content.type %>
+                                                        <% if (content.duration) { %>
+                                                            | المدة: <%= Math.floor(content.duration / 60) %> دقيقة
+                                                        <% } %>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="flex gap-2">
+                                                <% if (content.type === 'quiz') { %>
+                                                    <a href="/admin/quiz/<%= content.id %>" 
+                                                       class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                                        إدارة الأسئلة
+                                                    </a>
+                                                <% } %>
+                                                <button onclick="deleteContent(<%= content.id %>)" 
+                                                        class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                                    حذف
+                                                </button>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Professional Notification System -->
+    <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Professional Notification System
+        class NotificationSystem {
+            constructor() {
+                this.container = document.getElementById('notification-container');
+            }
+
+            show(message, type = 'info', duration = 5000) {
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                
+                const icon = this.getIcon(type);
+                const colors = this.getColors(type);
+                
+                notification.innerHTML = `
+                    <div class="flex items-center p-4 rounded-lg shadow-lg border-r-4 ${colors.bg} ${colors.border} max-w-md">
+                        <div class="flex-shrink-0">
+                            ${icon}
+                        </div>
+                        <div class="mr-3 flex-1">
+                            <p class="text-sm font-medium ${colors.text}">${message}</p>
+                        </div>
+                        <button class="flex-shrink-0 ${colors.text} hover:opacity-75" onclick="this.parentElement.parentElement.remove()">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                this.container.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, duration);
+                
+                return notification;
+            }
+
+            getIcon(type) {
+                const icons = {
+                    success: '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>',
+                    error: '<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>',
+                    warning: '<svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>',
+                    info: '<svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>'
+                };
+                return icons[type] || icons.info;
+            }
+
+            getColors(type) {
+                const colors = {
+                    success: { bg: 'bg-green-50', border: 'border-green-400', text: 'text-green-800' },
+                    error: { bg: 'bg-red-50', border: 'border-red-400', text: 'text-red-800' },
+                    warning: { bg: 'bg-yellow-50', border: 'border-yellow-400', text: 'text-yellow-800' },
+                    info: { bg: 'bg-blue-50', border: 'border-blue-400', text: 'text-blue-800' }
+                };
+                return colors[type] || colors.info;
+            }
+
+            success(message, duration) { return this.show(message, 'success', duration); }
+            error(message, duration) { return this.show(message, 'error', duration); }
+            warning(message, duration) { return this.show(message, 'warning', duration); }
+            info(message, duration) { return this.show(message, 'info', duration); }
+        }
+
+        // Global notification system
+        window.notifications = new NotificationSystem();
+
+        // Professional confirmation dialog
+        function showConfirmDialog(message, onConfirm, onCancel = null) {
+            const dialog = document.createElement('div');
+            dialog.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            dialog.innerHTML = `
+                <div class="bg-white rounded-lg p-6 max-w-md mx-4 shadow-xl">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center ml-4">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900">تأكيد العملية</h3>
+                    </div>
+                    <p class="text-gray-600 mb-6">${message}</p>
+                    <div class="flex gap-3 justify-end">
+                        <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition" onclick="this.closest('.fixed').remove()">
+                            إلغاء
+                        </button>
+                        <button class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition" onclick="this.closest('.fixed').remove(); if(typeof onConfirm === 'function') onConfirm();">
+                            تأكيد
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+        function toggleAddContent(sectionId) {
+            const form = document.getElementById('add-content-' + sectionId);
+            form.classList.toggle('hidden');
+        }
+
+        function toggleContentType(select, sectionId) {
+            const urlFields = document.querySelectorAll('.content-url-field-' + sectionId);
+            urlFields.forEach(field => {
+                field.style.display = select.value === 'quiz' ? 'none' : 'block';
+            });
+        }
+
+        async function deleteSection(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا القسم وجميع محتوياته؟')) return;
+            
+            const response = await fetch(`/admin/sections/${id}`, { method: 'DELETE' });
+            const data = await response.json();
+            if (data.success) {
+                notifications.success('تم حذف القسم بنجاح');
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                notifications.error('فشل حذف القسم');
+            }
+        }
+
+        async function deleteContent(id) {
+            showConfirmDialog('هل أنت متأكد من حذف هذا المحتوى؟', async () => {
+                try {
+                    const response = await fetch(`/admin/contents/${id}`, { method: 'DELETE' });
+                    const data = await response.json();
+                    if (data.success) {
+                        notifications.success('تم حذف المحتوى بنجاح');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        notifications.error('فشل حذف المحتوى');
+                    }
+                } catch (error) {
+                    notifications.error('حدث خطأ في الاتصال');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
